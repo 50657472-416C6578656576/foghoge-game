@@ -14,7 +14,7 @@ namespace {
 constexpr int kStartWidth = 1280;
 constexpr int kStartHeight = 720;
 constexpr int kFontBaseSize = 64;   // rasterised once; drawn smaller with bilinear filtering
-constexpr float kLanternRadius = 260.0f;
+constexpr float kLanternRadius = 300.0f;
 
 // Every codepoint the game may draw. Anything not listed here renders as '?'.
 std::vector<int> BuildCodepoints() {
@@ -197,7 +197,13 @@ void Wrap(Vector2& p, float width, float height, float margin) {
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
+    // --shot <file.png>: render a few seconds with the lantern parked, save a frame, quit.
+    const char* shotPath = nullptr;
+    for (int i = 1; i + 1 < argc; ++i) {
+        if (std::string(argv[i]) == "--shot") shotPath = argv[i + 1];
+    }
+
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
     InitWindow(kStartWidth, kStartHeight, "foghoge");
     SetTargetFPS(60);
@@ -205,7 +211,10 @@ int main() {
 
     std::vector<int> codepoints = BuildCodepoints();
     const std::string fontPath = ResolveData("assets/fonts/DejaVuSansMono.ttf");
+    // Block and box glyphs overshoot the em box; raylib warns per glyph but renders them fine.
+    SetTraceLogLevel(LOG_ERROR);
     Font font = LoadFontEx(fontPath.c_str(), kFontBaseSize, codepoints.data(), static_cast<int>(codepoints.size()));
+    SetTraceLogLevel(LOG_INFO);
     GenTextureMipmaps(&font.texture);
     SetTextureFilter(font.texture, TEXTURE_FILTER_TRILINEAR);
 
@@ -239,7 +248,7 @@ int main() {
         }
 
         // --- update ----------------------------------------------------------
-        const Vector2 mouse = GetMousePosition();
+        const Vector2 mouse = shotPath ? Vector2{width * 0.42f, height * 0.55f} : GetMousePosition();
         lanternPos.x += (mouse.x - lanternPos.x) * std::min(1.0f, dt * 14.0f);
         lanternPos.y += (mouse.y - lanternPos.y) * std::min(1.0f, dt * 14.0f);
         // The hero trails the lantern they are holding out in front of them.
@@ -341,6 +350,11 @@ int main() {
         DrawTextEx(font, hint, {(width - hs.x) * 0.5f, height - 34.0f}, 16, 1, Shade(120, 110, 100, 0.55f));
 
         EndDrawing();
+
+        if (shotPath && t > 3.0f) {
+            TakeScreenshot(shotPath);
+            break;
+        }
     }
 
     UnloadRenderTexture(scene);

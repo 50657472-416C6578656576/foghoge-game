@@ -49,7 +49,7 @@ void main() {
 
     vec3 warm = vec3(1.00, 0.72, 0.42);
     vec3 cold = vec3(0.10, 0.14, 0.22);                 // moonless ambient
-    vec3 lit = scene * (cold * 0.55 + warm * (light * 1.25 + core * 0.35) * flicker);
+    vec3 lit = scene * (cold * 1.1 + warm * (light * 1.25 + core * 0.35) * flicker);
 
     // A faint halo so the darkness around the lantern isn't pure black.
     lit += warm * 0.025 * light * flicker;

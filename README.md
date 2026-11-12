@@ -1,5 +1,7 @@
 # foghoge
 
+Status: early prototype, work in progress.
+
 An atmospheric, D&D-flavoured horror JRPG drawn entirely in ASCII and Unicode glyphs.
 Glyphs are placed at free sub-pixel positions rather than on a terminal grid, then lit by a
 post-process lantern shader with flicker, vignette and film grain.
@@ -39,3 +41,7 @@ Move the mouse to carry the lantern. Esc quits.
 | `src/main.cpp` | Window, font loading, glyph scene, lighting pass |
 | `shaders/lantern.fs` | Post-process: lantern falloff, flicker, vignette, grain |
 | `assets/fonts/` | DejaVu Sans Mono (box-drawing and block glyphs) and its license |
+
+## License
+
+Code is MIT, see [LICENSE](LICENSE). DejaVu Sans Mono is distributed under its own license, see [assets/fonts/DejaVuSansMono-LICENSE.txt](assets/fonts/DejaVuSansMono-LICENSE.txt).
